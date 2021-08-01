@@ -1,0 +1,27 @@
+{
+  "name": "simple-chat-app",
+  "version": "1.0.0",
+  "description": "Simple Chat Application",
+  "main": "index.js",
+  "scripts": {
+    "client": "cd client && npm start",
+    "server": "cd server && npm start",
+    "dev": "concurrently --kill-others \"npm run server\" \"npm run client\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tymefighter/SimpleChatApp.git"
+  },
+  "author": "Ahmed Zaheer Dadarkar",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tymefighter/SimpleChatApp/issues"
+  },
+  "homepage": "https://github.com/tymefighter/SimpleChatApp#readme",
+  "dependencies": {
+    "typescript": "^4.3.5"
+  },
+  "devDependencies": {
+    "concurrently": "^6.2.0"
+  }
+}
