@@ -15,7 +15,7 @@ const subscribers: types.Subscriber[] = [];
 const app = express();
 
 // Use JSON and CORS middleware
-app.use(cors({ origin: "http://localhost:3000", credentials: true }));
+app.use(cors());
 app.use(express.text());
 
 // Username Endpoint

@@ -17,8 +17,7 @@ export default function Chat() {
 
     useEffect(() => {
         const eventSource = new EventSource(
-            `http://localhost:5000/chat/${username}`,
-            { withCredentials: true }
+            `http://localhost:5000/chat/${username}`
         );
 
         eventSource.addEventListener("currentMessages", (event: unknown) => {
