@@ -4,7 +4,7 @@
   "description": "Chat Application Server",
   "main": "index.js",
   "scripts": {
-    "start": ""
+    "start": "tsc -p . && node build/server"
   },
   "author": "Ahmed Zaheer Dadarkar",
   "license": "ISC",
