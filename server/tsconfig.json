@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "lib": ["ES2020"],
+        "module": "CommonJS",
+        "target": "ES2017",
+        "allowJs": false,
+        "strict": true,
+        "strictBindCallApply": true,
+        "strictFunctionTypes": true,
+        "strictNullChecks": true,
+        "strictPropertyInitialization": true,
+        "noImplicitAny": true,
+        "outDir": "build"
+    },
+    "include": ["src"],
+    "exclude": []
+}
