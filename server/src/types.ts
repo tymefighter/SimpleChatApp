@@ -1,3 +1,5 @@
+import { Response } from "express";
+
 export interface Message {
     username: string;
     message: string;
@@ -11,3 +13,8 @@ export function isMessage(message: any): message is Message {
         && typeof message.message === "string"
     );
 }
+
+export interface Subscriber {
+    username: string;
+    response: Response;
+};

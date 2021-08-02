@@ -1,33 +1,66 @@
 import * as express from "express";
 import * as types from "./types";
 
+// Usernames
+const usernames = new Set<string>();
+
 // Messages
 const messages: types.Message[] = [];
 
 // Message Subscribers
-const subscribers: express.Response[] = [];
+const subscribers: types.Subscriber[] = [];
 
 // Create Express App
 const app = express();
 
 // Use JSON middleware
-app.use(express.json());
+app.use(express.text());
+
+// Username Endpoint
+app
+    .route("/username")
+
+    .post((request, response) => {
+        const username = request.body;
+
+        if(isUsernameTaken(username))
+            sendUsernameTakenErrorResponse(response);
+
+        else {
+            usernames.add(username);
+            sendReceivedUsernameResponse(response, username);
+        }
+    })
 
 // Chat Endpoint
+app.use("/chat/:username", (request, response, next) => {
+    if(! isUsernameTaken(request.params.username))
+        response
+            .status(403)
+            .end("Username has not been registered");
+
+    else next();
+});
+
 app
-    .route("/chat")
+    .route("/chat/:username")
 
     .get((request, response) => {
         response.header("Content-Type", "text/event-stream");
         addHandlerForConnectionClose(request, response);
         sendCurrentMessages(response);
-        addSubscriber(response);
+        addSubscriber(request.params.username, response);
     })
 
     .post((request, response) => {
-        const message = request.body;
+        const messageString = request.body;
 
-        if(types.isMessage(message)) {
+        if(typeof messageString === "string") {
+            const message = { 
+                username: request.params.username, 
+                message: messageString 
+            };
+
             addMessageToMessages(message);
             broadcastMessageToSubscribers(message);
             sendReceivedMessageResponse(response, message);
@@ -44,6 +77,25 @@ app.listen(PORT, () => {
 
 // Helper functions
 
+function isUsernameTaken(username: string): boolean {
+    return usernames.has(username);
+}
+
+function sendUsernameTakenErrorResponse(response: express.Response) {
+    response
+        .status(406)
+        .end("Username has already been taken");
+}
+
+function sendReceivedUsernameResponse(
+    response: express.Response,
+    username: string
+) {
+    response
+        .status(200)
+        .end(username);
+}
+
 function addHandlerForConnectionClose(
     request: express.Request,
     response: express.Response
@@ -56,7 +108,7 @@ function addHandlerForConnectionClose(
 
 function removeSubscriber(response: express.Response) {
     const indexInSubscribers = subscribers.findIndex(
-        currentResponse => currentResponse === response 
+        subscriber => subscriber.response === response 
     );
 
     subscribers.splice(indexInSubscribers, 1);
@@ -71,8 +123,9 @@ function sendCurrentMessages(response: express.Response) {
     );
 }
 
-function addSubscriber(response: express.Response) {
-    subscribers.push(response);
+function addSubscriber(username: string, response: express.Response) {
+    const subscriber: types.Subscriber = { username, response }
+    subscribers.push(subscriber);
 }
 
 function addMessageToMessages(message: types.Message) {
@@ -82,7 +135,7 @@ function addMessageToMessages(message: types.Message) {
 function broadcastMessageToSubscribers(message: types.Message) {
     const messageString = JSON.stringify(message);
 
-    subscribers.forEach(response => {
+    subscribers.forEach(({ response }) => {
         response.write(
             "event: message\n"
             + `data: ${messageString}`
@@ -96,11 +149,11 @@ function sendReceivedMessageResponse(
 ) {
     response
         .status(200)
-        .json(message);
+        .end(message.username);
 }
 
 function sendErrorMessageBodyResponse(response: express.Response) {
     response
         .status(400)
-        .end("Received Message does not have the required fields");
+        .end("Received Message is not a string");
 }
