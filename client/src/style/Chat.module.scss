@@ -1,0 +1,51 @@
+.menuBar {
+    background-color: rgb(186, 196, 180);
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.2rem;
+
+    button {
+        font-size: 2rem;
+    }
+}
+
+.chatWindow {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    overflow: scroll;
+    background-color: rgb(211, 251, 225);
+    height: 60vh;
+
+    .left {
+        width: fit-content;
+        margin-right: auto;
+    }
+
+    .right {
+        width: fit-content;
+        margin-left: auto;
+    }
+}
+
+.chat {
+    form {
+        padding: 2rem;
+        background-color: rgb(255, 217, 253);
+        display: flex;
+        justify-content: space-between;
+    }
+
+    textarea {
+        padding: 0.5rem;
+        font-size: 1.3rem;
+        width: 90%;
+    }
+
+    button {
+        font-size: 3rem;
+        height: fit-content;
+        width: 5%;
+    }
+}
