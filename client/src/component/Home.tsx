@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useHistory } from "react-router-dom";
 import styles from "../style/Home.module.scss";
+import { SERVER_URL } from "../constants";
 
 export default function Home() {
 
@@ -17,7 +18,7 @@ export default function Home() {
     function submitHandler(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
 
-        fetch("http://localhost:5000/username", {
+        fetch(`${SERVER_URL}/username`, {
             method: "POST",
             headers: {
                 "Content-Type": "text/plain"
