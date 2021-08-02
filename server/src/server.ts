@@ -35,6 +35,13 @@ app
         else sendErrorMessageBodyResponse(response);
     })
 
+// Begin Server
+const PORT = 5000;
+
+app.listen(PORT, () => {
+    console.log("Server Started at http://localhost:5000");
+})
+
 // Helper functions
 
 function addHandlerForConnectionClose(
