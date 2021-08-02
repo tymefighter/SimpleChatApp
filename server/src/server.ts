@@ -1,5 +1,6 @@
 import * as express from "express";
 import * as types from "./types";
+import * as cors from "cors";
 
 // Usernames
 const usernames = new Set<string>();
@@ -13,7 +14,8 @@ const subscribers: types.Subscriber[] = [];
 // Create Express App
 const app = express();
 
-// Use JSON middleware
+// Use JSON and CORS middleware
+app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 app.use(express.text());
 
 // Username Endpoint
@@ -47,6 +49,7 @@ app
 
     .get((request, response) => {
         response.header("Content-Type", "text/event-stream");
+        response.flushHeaders();
         addHandlerForConnectionClose(request, response);
         sendCurrentMessages(response);
         addSubscriber(request.params.username, response);
@@ -118,8 +121,8 @@ function sendCurrentMessages(response: express.Response) {
     const messagesAsString = JSON.stringify(messages);
 
     response.write(
-        "event: current-messages\n"
-        + `data: ${messagesAsString}`
+        "event: currentMessages\n"
+        + `data: ${messagesAsString}\n\n`
     );
 }
 
@@ -135,10 +138,10 @@ function addMessageToMessages(message: types.Message) {
 function broadcastMessageToSubscribers(message: types.Message) {
     const messageString = JSON.stringify(message);
 
-    subscribers.forEach(({ response }) => {
+    subscribers.forEach(({ username, response }) => {
         response.write(
             "event: message\n"
-            + `data: ${messageString}`
+            + `data: ${messageString}\n\n`
         );
     });
 }
@@ -149,7 +152,7 @@ function sendReceivedMessageResponse(
 ) {
     response
         .status(200)
-        .end(message.username);
+        .end(message.message);
 }
 
 function sendErrorMessageBodyResponse(response: express.Response) {
