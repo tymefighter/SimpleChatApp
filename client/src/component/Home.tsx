@@ -16,7 +16,26 @@ export default function Home() {
 
     function submitHandler(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
-        history.push(`/chat/${username}`);
+
+        fetch("http://localhost:5000/username", {
+            method: "POST",
+            headers: {
+                "Content-Type": "text/plain"
+            },
+            body: username
+        })
+        .then(response => 
+            response
+                .text()
+                .then(text => ({ ok: response.ok, text }))
+        )
+        .then(({ ok, text }) => {
+            if(ok) {
+                const username = text;
+                history.push(`/chat/${username}`);
+            }
+            else alert("Username Already Taken");
+        })
     }
 
     return (
