@@ -3,6 +3,7 @@ import * as types from "../types";
 import { useParams } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import ChatBubble from "./ChatBubble";
+import { SERVER_URL } from "../constants";
 
 interface ChatUrlParams {
     username: string;
@@ -17,8 +18,7 @@ export default function Chat() {
 
     useEffect(() => {
         const eventSource = new EventSource(
-            `http://localhost:5000/chat/${username}`,
-            { withCredentials: true }
+            `${SERVER_URL}/chat/${username}`
         );
 
         eventSource.addEventListener("currentMessages", (event: unknown) => {
@@ -68,7 +68,7 @@ export default function Chat() {
     function submitHandler(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
 
-        fetch(`http://localhost:5000/chat/${username}`, {
+        fetch(`${SERVER_URL}/chat/${username}`, {
             method: "POST",
             headers: {
                 "Content-Type": "text/plain"

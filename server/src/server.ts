@@ -2,6 +2,9 @@ import * as express from "express";
 import * as types from "./types";
 import * as cors from "cors";
 
+const DEVELOPMENT_PORT = 5000;
+const PRODUCTION_PORT = 3000;
+
 // Usernames
 const usernames = new Set<string>();
 
@@ -14,8 +17,17 @@ const subscribers: types.Subscriber[] = [];
 // Create Express App
 const app = express();
 
-// Use JSON and CORS middleware
-app.use(cors({ origin: "http://localhost:3000", credentials: true }));
+// Development and Production
+let port = PRODUCTION_PORT;
+if(process.argv[2] === "prod")
+    app.use(express.static("../client/build"));
+
+else {
+    port = DEVELOPMENT_PORT;
+    app.use(cors()); // use CORS middleware
+}
+
+// Use JSON middleware
 app.use(express.text());
 
 // Username Endpoint
@@ -72,10 +84,8 @@ app
     })
 
 // Begin Server
-const PORT = 5000;
-
-app.listen(PORT, () => {
-    console.log("Server Started at http://localhost:5000");
+app.listen(port, () => {
+    console.log(`Server Started at http://localhost:${port}`);
 })
 
 // Helper functions
