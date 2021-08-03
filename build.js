@@ -2,7 +2,7 @@ const fs = require("fs");
 
 const prodCode = 
     `
-        const SERVER_URL = "http://localhost:3000";
+        const SERVER_URL = "";
         export { SERVER_URL };
     `;
 
